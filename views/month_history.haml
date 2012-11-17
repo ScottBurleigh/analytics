@@ -1,0 +1,10 @@
+%html
+  %head
+    %link(rel="stylesheet" type="text/css"){:href => url("/css/jquery.jqplot.css")}
+    %link(rel="stylesheet" type="text/css"){:href => url("/css/analytics.css")}
+  %body
+    = haml :banner
+    %p
+      = MonthSummaryHelper.new($db, Month.last).run
+    %h1 Monthly History
+    = MonthlyHistory.new($db).render

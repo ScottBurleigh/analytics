@@ -1,0 +1,12 @@
+%html
+  %head
+    %link(rel="stylesheet" type="text/css"){ :href => url("/css/jquery.jqplot.css")}
+    %link(rel="stylesheet" type="text/css"){ :href=>url("/css/analytics.css")}
+  %body
+    = haml :banner
+    #visit-history(style="height:200px;width:800px; ")
+    //= VisitHistory.new($db).message
+    = RecentTops.new($db).render
+    = VisitHistory.new($db).render
+    = haml :js
+    %script(type="text/javascript"){:src => url("/js/analytics.js")}

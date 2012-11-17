@@ -1,0 +1,147 @@
+$: << 'lib'
+$VERBOSE = true
+
+DATA_DIR = 'data/'
+require 'date'
+DB_FILE = DATA_DIR + 'data.db'
+TEST_DB_FILE = 'test/test.db'
+
+require 'log'
+require 'pry'
+
+require 'sqlite3'
+require 'json'
+require 'dataGateway'
+
+def ensure_rm file
+  rm_r file if File.exist? file
+end
+
+
+
+task :default => [:test]
+
+desc "update google authentication token"
+task :auth do
+  require 'load/auth'
+  AuthorizationTokenLoader.new(DATA_DIR).run
+end
+
+desc "rebuild launch data"
+task :launch do
+  require 'load'
+  DataLoader.new(DATA_DIR).reload_launches
+end
+
+desc "download data from google and load into database"
+task :db do
+  require 'load'
+  loader = DataLoader.new(DATA_DIR)
+  loader.run
+end
+
+desc "rebuild database from raw downloaded files"
+task :rebuild_db do
+  require 'load'
+  loader = DataLoader.new(DATA_DIR)
+  loader.rebuild
+end
+
+desc "download unique monthly visitor data"
+task :mvis do
+  require 'load'
+  loader = DataLoader.new(DATA_DIR)
+  loader.mvis
+end
+
+task :enrich do
+  require 'load'
+  loader = DataLoader.new(DATA_DIR)
+  loader.enrich_db
+end
+
+
+task :db_clear_month_views_table do
+  db = SQLite3::Database.open DB_FILE
+  db.execute "drop table monthviews;"
+  db.close
+end
+
+
+
+task :clear_prod_db do
+  ensure_rm DB_FILE
+  SQLite3::Database.new DB_FILE
+end
+
+
+task :export_test_db do
+  require 'test/testDbBuilder'
+  ensure_rm TEST_DB_FILE
+  TestDbBuilder.new(DB_FILE, TEST_DB_FILE).run
+  puts "newly exported data in #{TEST_DB_FILE}"
+  puts "remember to copy this to base db"
+end
+
+task :clear_test_db do
+  require 'load'
+
+  log "rebuilding test databases"
+  log_with_level Logger::WARN do
+  #log_with_level Logger::INFO do
+    cp 'test/data_src/data.db', TEST_DB_FILE
+    ensure_rm 'test/data'
+    cp_r 'test/data_src', 'test/data'
+    start = Date.new(2011,11,1)
+    finish = Date.new(2012,2,1)
+    test_dates = start..finish
+    loader = DataLoader.new('test/data/', test_dates)
+    loader.enrich_db
+  end
+  log "\ndone"
+end
+
+desc "create tags"
+task :tags do
+  system "rtags -R . "
+end
+
+desc "run unit tests"
+task :test => :clear_test_db do
+  require 'rake/runtest'
+  require 'load'
+  Rake.run_tests "test/**/*Tester.rb"
+end
+
+desc "one unit test"
+task :one do
+  require 'test/unit/testsuite'
+  require 'test/unit/ui/console/testrunner'
+  require 'test/monthLoaderTester.rb'
+  require 'test/medianSparklineTester.rb'
+
+  suite = Test::Unit::TestSuite.new
+  test_spark = "test_enriches_path_summary_data"
+  suite << MedianSparklineTester.new(test_spark)
+  test1 = "test_month_loader_does_not_create_dupicates"
+  suite << MonthLoaderTester.new(test1)
+  test2 = "test_month_with_some_values_will_build_all_values"
+  suite << MonthLoaderTester.new(test2)
+
+  Test::Unit::UI::Console::TestRunner.run(suite)
+end
+
+task :small => :clear_test_db do
+  require 'test/unit/testsuite'
+  require 'test/unit/ui/console/testrunner'
+
+  Dir['test/*Tester.rb'].each {|f| require f}
+
+  suite = Test::Unit::TestSuite.new
+  suite << MedianSparklineTester.suite
+  suite << PageViewLoaderTester.suite
+
+  Test::Unit::UI::Console::TestRunner.run(suite, Test::Unit::UI::NORMAL)
+end
+
+
