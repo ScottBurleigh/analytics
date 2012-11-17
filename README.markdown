@@ -10,6 +10,12 @@ The code is in two parts.
 
 My general philosophy is to do all the calculations as part of the loader, since this is all read-only data. As much as possible I use SQL to handle the various slicing and dicing, with ruby scripts to coordinate the loading process and fill in any gaps that the SQL can't handle.
 
+Prerequisites
+==========
+
+Both the loader and webapp use ruby, with a bunch of ruby libraries. Some day I should figure out what's needed and sort things out with bundler, but I haven't done that yet. Certainly you'll need sqlite3, json, highline for the loader. The webapp needs sinatra, haml, sass, and kramdown. But that's probably not the complete list.
+
+
 Loader
 =======
 
@@ -26,6 +32,8 @@ To get the loader going you'll need to create a folder called `data` in this dir
 Once you have `config.yaml` in place, the next step is to get an authorization token to access the data from google. To do this use the task `rake auth`. This will use the auth_email, ask you for your google password, and then ask google analytics for an authorization token. It will write that authorization token into the data directory so other tasks can use it later. The token in written in the clear, but the consequences of losing it aren't too serious and you can always generate another one with another invocation of `rake auth`.
 
 Once you have an authorization token you can then use `rake db` to download the google analytics data and load up the database. The scripts take the raw google data and store it all as files within the data directory, so you don't need to download them again. It then creates a sqlite database at `data/data.db` and loads it up with data from the downloaded text files and the results of various calculations. I like to keep the data directory in a (separate) git repo which I link into the analytics folder. I ignore `data.db` as it's large and easily regenerated, but I like to have my own copy of the raw google analytics data.
+
+When downloading the data from google, I ran into rate limiting errors from gogole. I was able to deal with those simply by re-running `rake db`, it will pick up from where it left off.
 
 Webapp
 =======
