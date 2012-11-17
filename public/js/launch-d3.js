@@ -4,7 +4,7 @@ top_chart = function() {
   var path;
   var data;
   var container = {width: 700, height: 300};
-  var margins = {top: 10, right: 20, bottom: 30, left: 50}
+  var margins = {top: 10, right: 20, bottom: 60, left: 50}
   var chart;
 
   // x-axis count from launch date
@@ -30,28 +30,39 @@ top_chart = function() {
     };    
   }
   function draw_points() {
-    chart.append("g")
-      .selectAll("circle.view")
-      .data(series())
-      .enter()
+    var selection = chart.selectAll("circle.view").data(series());
+
+    selection.enter()
       .append("circle")
       .attr("class", "view")
     ;
-    d3.selectAll("circle.view")
+
+    selection.exit().remove();
+      
+   selection
       .attr("cy", function(d){ return view_scale()(d.views);})
       .attr("cx", function(d){ return count_scale()(d.count);})
       .attr("r", 2);
   }
   
   function draw_line() {
+    var selection = chart.selectAll("path.view").data(series());
+
     var line = d3.svg.line()
       .x(function(d){return count_scale()(d.count)})
       .y(function(d){return view_scale()(d.views)})
     ;
-    chart.append("path")
-      .attr("d", line(series()))
-      .attr("class", "views")
+
+    selection.enter()
+      .append("svg:path")      
+      .attr("class", "view")
     ;
+
+    selection.exit().remove();
+
+    selection
+      .attr("d", line(series()))
+      
   }
 
   function apply_mouseover_behavior() {
@@ -76,23 +87,21 @@ top_chart = function() {
       });
   }
 
-  function add_label_to_view_axis() {
-    chart.select(".y.axis")
-      .append("text")
-      .attr("text_anchor", "middle")
-      .text("uniques")
-      .attr("transform", "rotate(-270, 0, 0)")
-      .attr("x", container.height/2)
-      .attr("y", 50)
-    ;
-  }
 
   function add_x_axis() {
+    function add_label() {
+      chart.select(".x.axis")
+        .append("text")
+        .text("days since launch")
+        .attr("y", 40)
+        .attr("x", 150)
+    }
     chart.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + chart_dim().height + ")")
       .call(count_axis())
     ;
+    add_label();
   }
   function add_y_axis() {
     function view_axis() {
@@ -102,13 +111,23 @@ top_chart = function() {
         .orient("left")
       ;
     }
+    function add_label() {
+      chart.select(".y.axis")
+        .append("text")
+        .attr("text-anchor", "middle")
+        .text("unique page views")
+        .attr("transform", "rotate(-90, 0, 0)")
+        .attr("x", -container.height/2)
+        .attr("y", -70)
+      ;
+    }
     
     chart.append("g")
       .attr("class", "y axis")
       .attr("transform", "translate(" + margins.left + ",0)")
       .call(view_axis())
     ;
-    add_label_to_view_axis();
+    add_label();
   }
 
   function layout_chart_container() {
@@ -126,10 +145,30 @@ top_chart = function() {
   function series() {
     return data[path].data;
   }
+  
+  function add_title() {
+    chart.append("text")
+      .attr("text-anchor", "end")
+      .attr('class', 'title')
+      .attr('x', container.width/2)
+      .attr('y', 40)
+  }
+  function update_title() {
+    chart.select('text.title')
+      .text(path)
+  }
 
-
-  // y-axis number of page views
   function view_extent() {
+    return fixed_view_extent();
+  }
+
+  function fixed_view_extent() {
+    return d3.extent([0,5000]);
+  }
+
+  // y-axis based on number of page views
+  // not used at moment, but maybe later
+  function variable_view_extent() {
     return d3.extent([0, d3.max(series(), function(d){return d.views})]);
   }
 
@@ -143,14 +182,18 @@ top_chart = function() {
   
   self.render_container = function() {
     layout_chart_container();
+    add_x_axis();
+    add_y_axis();
+    add_title();
     return self;
   }
+
+
 
   self.draw = function() {
     draw_line();
     draw_points();
-    add_x_axis();
-    add_y_axis();
+    update_title();
     apply_mouseover_behavior();
     return self;
   }
@@ -167,6 +210,10 @@ top_chart = function() {
     return self;
   }
 
+  self.show = function(arg) {
+    self.path(arg).draw();
+  }
+
   function self() {
     return self;
   }
@@ -175,11 +222,19 @@ top_chart = function() {
 }();
 
 $(function() {
-  d3.json("/analytics/launch.json", function(d) {
-    top_chart.data(d);
-    top_chart.path("/articles/nosqlKeyPoints.html");
-    //top_chart.path("/articles/agileFluency.html");
-    top_chart.render_container();
-    top_chart.draw();
-   })
+  function simple() {
+    d3.json("/analytics/launch.json", function(d) {
+      top_chart.data(d);
+      top_chart.render_container();
+      top_chart.show("/articles/agileFluency.html");
+    });
+  }
+  simple();
+  $("ul.links li").click(function( e ) {
+    top_chart.show($(this).text());
+    //alert("hello: " + $(this).text());
+  });
+  
 });
+
+
