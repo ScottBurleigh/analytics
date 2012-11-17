@@ -22,7 +22,7 @@ get '/launches' do
   haml :launches
 end
 
-get '/launches-d3' do
+get '/d3' do
   haml :launches_d3
 end
 

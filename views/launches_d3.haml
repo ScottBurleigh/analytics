@@ -1,6 +1,6 @@
 %html
   %head
-    %link(rel="stylesheet" type="text/css" href="/analytics/css/launch-d3.css")
+    %link(rel="stylesheet" type="text/css"){:href => url("/css/launch-d3.css")}
   %body
     = haml :banner
     %h1 Trying out d3 graphic
@@ -8,6 +8,6 @@
     %p
       Graphic should be above this paragraph
     = haml :js
-    %script(type = "text/javascript" src = "/analytics/js/d3.v2.js")
-    %script(type = "text/javascript" src = "/analytics/js/launch-d3.js")
+    %script(type = "text/javascript"){:src => url("/js/d3.v2.js")}
+    %script(type = "text/javascript"){:src => url("/js/launch-d3.js")}
 
