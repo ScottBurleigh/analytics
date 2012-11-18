@@ -1,11 +1,14 @@
 %html
   %head
     %link(rel="stylesheet" type="text/css"){:href => url("/css/jquery.jqplot.css")}
-    %link(rel="stylesheet" type="text/css"){:href => url("/css/analytics.css")}
+    %link(rel="stylesheet" type="text/css"){:href => url("/css/launches.css")}
   %body
     = haml :banner
     %h1 Launches
+    .top-chart
     = LaunchesList.new($db).render
     .key= markdown(:launches_key)
     = haml :js
+    %script(type = "text/javascript"){:src => url("/js/d3.v2.js")}
+    %script(type = "text/javascript"){:src => url("/js/launch-top-chart.js")}
     %script(type="text/javascript"){:src => url("/js/launches.js")}

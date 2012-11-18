@@ -7,11 +7,12 @@ class LaunchesList
   def render
    @xml.div(:class => 'launches') do
       @table = select_launches
-      enrich_with_sparklines
+      #enrich_with_sparklines
+      enrich_with_plot_commands
       # @xml << @table.inspect
       TableRenderer.new(@table, @out).
-        columns('path', 'date', 'total_7_days', 
-                'total_28_days', 'peak_day', 'recent_median', 'history').
+        columns('path', 'plot', 'date', 'total_7_days', 
+                'total_28_days', 'peak_day', 'recent_median').#, 'history').
         render      
     end
     return @out.string
@@ -24,6 +25,11 @@ class LaunchesList
     @table.each do |row|
       row['history'] = "<span class = 'sparkline-20d'>" + 
         row['history'].to_s + "</span>"
+    end
+  end
+  def enrich_with_plot_commands
+    @table.each do |row|
+      row['plot'] = "<span class = 'plot' data-path = '#{row['path']}'>plot</span>" 
     end
   end
 end

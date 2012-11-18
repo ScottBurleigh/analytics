@@ -1,0 +1,27 @@
+.top-chart {
+
+  text {
+    font-size: 90%;
+  }
+  
+  path {
+    stroke: black;
+    fill: none;
+  }
+
+  path.view {
+    fill: none;
+    stroke-width: 2px;
+    stroke: gray;
+  }
+
+  .tick {
+    stroke: black;
+  }
+
+  circle {
+    fill: white;
+    stroke: gray;
+  }
+
+}

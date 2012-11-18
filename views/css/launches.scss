@@ -1,0 +1,9 @@
+@import 'launch-top-chart';
+@import 'analytics';
+
+
+span.plot{
+  color: $purple;
+  @extend .clickable;
+}
+

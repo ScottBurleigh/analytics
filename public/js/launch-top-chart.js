@@ -1,4 +1,4 @@
-top_chart = function() {
+function launch_top_chart() {
   "use strict";
 
   var path;
@@ -42,7 +42,7 @@ top_chart = function() {
    selection
       .attr("cy", function(d){ return view_scale()(d.views);})
       .attr("cx", function(d){ return count_scale()(d.count);})
-      .attr("r", 2);
+      .attr("r", 4);
   }
   
   function draw_line() {
@@ -92,7 +92,7 @@ top_chart = function() {
     function add_label() {
       chart.select(".x.axis")
         .append("text")
-        .text("days since launch")
+        .text("weekdays since launch")
         .attr("y", 40)
         .attr("x", 150)
     }
@@ -131,7 +131,7 @@ top_chart = function() {
   }
 
   function layout_chart_container() {
-    chart = d3.select(".graph")
+    chart = d3.select(".top-chart")
       .append("svg")
       .attr("width", container.width)
       .attr("height", container.height)
@@ -219,22 +219,4 @@ top_chart = function() {
   }
 
   return self;
-}();
-
-$(function() {
-  function simple() {
-    d3.json("/analytics/launch.json", function(d) {
-      top_chart.data(d);
-      top_chart.render_container();
-      top_chart.show("/articles/agileFluency.html");
-    });
-  }
-  simple();
-  $("ul.links li").click(function( e ) {
-    top_chart.show($(this).text());
-    //alert("hello: " + $(this).text());
-  });
-  
-});
-
-
+};

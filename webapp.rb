@@ -42,6 +42,10 @@ get '/css/launch-d3.css' do
   scss :'css/launch-d3'
 end
 
+get '/css/launches.css' do
+  scss :'css/launches'
+end
+
 error do
   "oops: <br>" + env['sinatra.error'].message
 end
