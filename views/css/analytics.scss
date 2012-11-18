@@ -12,7 +12,15 @@ body {
 }
 
 .banner {
-  margin: 0 5px 20px 5px;
+  margin-bottom:20px;
+  color: white;
+  font-style: bold;
+  background-color:black;
+  padding: 5px 10px;
+  a {
+    @extend clickable;
+    color: white;
+  }
 }
 
 table {
@@ -34,10 +42,17 @@ ul {
 ol {
   list-style: decimal;
   margin-left: 1.5em;
-}
+} 
 
 p, h1, h2, h3, h4, h5 ul {
     margin: 1em 0;
+}
+
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
 }
 
 .key {
@@ -45,6 +60,7 @@ p, h1, h2, h3, h4, h5 ul {
   background-color: #EEEEEE;
   padding: 1em;
   font-size: 80%;
+  width: 30em;
 }
 
 .clickable:hover {

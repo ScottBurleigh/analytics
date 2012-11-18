@@ -8,5 +8,6 @@
     //= VisitHistory.new($db).message
     = RecentTops.new($db).render
     = VisitHistory.new($db).render
+    .key= markdown(:top_key)
     = haml :js
     %script(type="text/javascript"){:src => url("/js/analytics.js")}
