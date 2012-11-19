@@ -1,0 +1,11 @@
+source 'http://rubygems.org'
+gem 'json'
+gem 'pry'
+gem 'sqlite3'
+gem 'highline'
+
+gem 'sinatra'
+gem 'kramdown'
+gem 'builder'
+gem 'sass'
+gem 'haml'

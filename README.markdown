@@ -13,7 +13,12 @@ My general philosophy is to do all the calculations as part of the loader, since
 Prerequisites
 ==========
 
-Both the loader and webapp use ruby, with a bunch of ruby libraries. Some day I should figure out what's needed and sort things out with bundler, but I haven't done that yet. Certainly you'll need sqlite3, json, highline for the loader. The webapp needs sinatra, haml, sass, and kramdown. But that's probably not the complete list.
+Both the loader and webapp use ruby. I run it on my machine with the installed ruby 1.8.7, it ought to work with later versions too.
+
+It uses a bunch of gems (libraries). To install the necessary gems open up a command line in the repo's working folder and issue the following (you'll probably be asked for your password).
+
+    gem install bundler
+    bundle install
 
 
 Loader
