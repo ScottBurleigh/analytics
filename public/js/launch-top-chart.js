@@ -107,7 +107,7 @@ function launch_top_chart() {
     function view_axis() {
       return d3.svg.axis()
         .scale(view_scale())
-        .ticks(5)
+        .tickValues([100,500,2000, 5000, 10000])
         .orient("left")
       ;
     }
@@ -115,7 +115,7 @@ function launch_top_chart() {
       chart.select(".y.axis")
         .append("text")
         .attr("text-anchor", "middle")
-        .text("unique page views")
+        .text("unique page views (sqrt scale)")
         .attr("transform", "rotate(-90, 0, 0)")
         .attr("x", -container.height/2)
         .attr("y", -70)
@@ -163,7 +163,7 @@ function launch_top_chart() {
   }
 
   function fixed_view_extent() {
-    return d3.extent([0,5000]);
+    return d3.extent([0,10000]);
   }
 
   // y-axis based on number of page views
@@ -173,7 +173,7 @@ function launch_top_chart() {
   }
 
   function view_scale() {
-    return d3.scale.linear()
+    return d3.scale.sqrt()
       .domain(view_extent())
       .range([chart_dim().height, margins.top])
       .nice()
