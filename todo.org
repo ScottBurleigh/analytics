@@ -1,0 +1,5 @@
+* TODO Fix z order of lines and points
+
+Some points show above the line and some below. I think this is due to drawing order, if you plot a graph with less than full set of points, then you move existing points and new lines get drawn over them (or something like that). There's no z-order property in SVG to help fix this. Maybe need to play around with grouping or the order that the line is drawn in (maybe it goes one way and points go another.
+
+see <https://github.com/mbostock/d3/issues/252>
