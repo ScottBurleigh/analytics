@@ -5,7 +5,7 @@ GEM
     coderay (1.0.7)
     haml (3.1.7)
     highline (1.6.13)
-    json (1.7.4)
+    json (1.7.7)
     kramdown (0.14.0)
     method_source (0.8)
     pry (0.9.10)
